@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FreelanceTracker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5905436cd29c123ed92f30acb6c7474eeb5ac3e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ef8c233ebd33dea9deda7aefdb7fe321e456051")]
 [assembly: System.Reflection.AssemblyProductAttribute("FreelanceTracker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FreelanceTracker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
