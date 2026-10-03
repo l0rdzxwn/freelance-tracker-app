@@ -13,7 +13,7 @@ namespace FreelanceTracker.Models
         public string Email { get; set; }
         public string Company { get; set; }
 
-        public string User { get; set; }
+        public string UserID { get; set; }
 
         public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }

@@ -6,7 +6,7 @@ namespace FreelanceTracker.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
     {
-        DbSet<Invoice> Invoices { get; set; }
-        DbSet<Client> Clients { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }
