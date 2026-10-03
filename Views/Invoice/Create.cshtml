@@ -1,0 +1,90 @@
+﻿@model FreelanceTracker.Models.Invoice
+
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="card-title mb-0 fw-bold">Create New Invoice</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 mb-3" role="alert"></div>
+
+                        <!-- Client Dropdown (Populated via ViewBag.ClientId) -->
+                        <div class="mb-3">
+                            <label asp-for="ClientID" class="form-label fw-semibold">Client</label>
+                            <select asp-for="ClientID" class="form-select" asp-items="ViewBag.ClientId">
+                                <option value="">-- Select Client --</option>
+                            </select>
+                            <span asp-validation-for="ClientID" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Invoice Number & Amount -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="InvoiceNumber" class="form-label fw-semibold">Invoice #</label>
+                                <input asp-for="InvoiceNumber" class="form-control" placeholder="e.g. INV-2026-001" />
+                                <span asp-validation-for="InvoiceNumber" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Amount" class="form-label fw-semibold">Amount ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input asp-for="Amount" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Amount" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Issue Date & Due Date -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="IssueDate" class="form-label fw-semibold">Issue Date</label>
+                                <input asp-for="IssueDate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="IssueDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DueDate" class="form-label fw-semibold">Due Date</label>
+                                <input asp-for="DueDate" type="date" class="form-control" value="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="DueDate" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Status Selection -->
+                        <div class="mb-4">
+                            <label asp-for="Status" class="form-label fw-semibold">Initial Status</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Pending" selected>Pending</option>
+                                <option value="Draft">Draft</option>
+                                <option value="Paid">Paid</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                &larr; Back to Invoices
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                Issue Invoice
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
