@@ -4,6 +4,7 @@ using FreelanceTracker.Data;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using FreelanceTracker.Models;
+using Microsoft.Identity.Client;
 
 namespace FreelanceTracker.Controllers
 {
@@ -29,7 +30,7 @@ namespace FreelanceTracker.Controllers
             {
                 return NotFound();
             }
-
+                
             return View(client);
 
 
@@ -68,8 +69,25 @@ namespace FreelanceTracker.Controllers
             }
 
             return View(client);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var currUserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var client = await _context.Clients.FirstOrDefaultAsync(c => currUserID == c.UserID && c.ID == id);
 
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+            
         }
 
     }
