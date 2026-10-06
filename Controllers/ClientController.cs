@@ -19,6 +19,24 @@ namespace FreelanceTracker.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            string currUserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var client = await _context.Clients.Include(i => i.Invoices).FirstOrDefaultAsync(c => id == c.ID && currUserID == c.UserID);
+
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            return View(client);
+
+
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             string currUserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
