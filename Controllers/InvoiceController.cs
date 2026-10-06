@@ -73,5 +73,26 @@ namespace FreelanceTracker.Controllers
             await populateDropdown();
             return View(invoice);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var invoice = await _context.Invoices.Include(c => c.Client).FirstOrDefaultAsync(i => i.ID == id && i.Client.UserID == userID);
+            
+            if(invoice == null)
+            {
+                return NotFound();
+            }
+
+            invoice.Status =(    invoice.Status == "Pending" )? "Paid" : "Pending";
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details","Client",new {id = invoice.ClientID});
+
+
+        }
     }
 }
