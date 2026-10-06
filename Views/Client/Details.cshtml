@@ -3,9 +3,10 @@
 @{
     ViewData["Title"] = $"{Model.Name} - Details";
 
-    var totalBilled = Model.Invoices.Sum(i => i.Amount);
-    var totalPaid = Model.Invoices.Where(i => i.Status == "Paid").Sum(i => i.Amount);
-    var pendingBalance = Model.Invoices.Where(i => i.Status == "Pending").Sum(i => i.Amount);
+    var invoices = Model.Invoices ?? new List<FreelanceTracker.Models.Invoice>();
+    var totalBilled = invoices.Sum(i => i.Amount);
+    var totalPaid = invoices.Where(i => i.Status == "Paid").Sum(i => i.Amount);
+    var pendingBalance = invoices.Where(i => i.Status == "Pending").Sum(i => i.Amount);
 }
 
 <div class="container py-4">
@@ -21,7 +22,7 @@
             <h2 class="fw-bold mb-0">@Model.Name</h2>
         </div>
         <div class="btn-group">
-            <a asp-controller="Invoice" asp-action="Create" class="btn btn-primary">
+            <a asp-controller="Invoice" asp-action="Create" asp-route-clientId="@Model.ID" class="btn btn-primary">
                 + Create Invoice
             </a>
             <a asp-action="Index" class="btn btn-outline-secondary">
@@ -81,10 +82,10 @@
     <!-- Related Invoices Sub-Table -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 fw-bold">Invoices (@Model.Invoices.Count)</h5>
+            <h5 class="card-title mb-0 fw-bold">Invoices (@invoices.Count)</h5>
         </div>
 
-        @if (!Model.Invoices.Any())
+        @if (!invoices.Any())
         {
             <div class="p-5 text-center text-muted">
                 <p class="mb-0">No invoices generated for this client yet.</p>
@@ -104,7 +105,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var invoice in Model.Invoices.OrderByDescending(i => i.IssueDate))
+                        @foreach (var invoice in invoices.OrderByDescending(i => i.IssueDate))
                         {
                             <tr>
                                 <td class="ps-4 fw-semibold text-primary">@invoice.InvoiceNumber</td>
@@ -112,18 +113,27 @@
                                 <td class="text-muted">@invoice.IssueDate.ToString("MMM dd, yyyy")</td>
                                 <td class="text-muted">@invoice.DueDate.ToString("MMM dd, yyyy")</td>
                                 <td>
-                                    @if (invoice.Status == "Paid")
-                                    {
-                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill">Paid</span>
-                                    }
-                                    else if (invoice.Status == "Pending")
-                                    {
-                                        <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill">Pending</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill">@invoice.Status</span>
-                                    }
+                                    <form asp-controller="Invoice" asp-action="ToggleStatus" asp-route-id="@invoice.ID" method="post" class="m-0 p-0 d-inline">
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="btn btn-link p-0 border-0 text-decoration-none shadow-none" style="cursor: pointer;">
+                                            @if (invoice.Status == "Paid")
+                                            {
+                                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill">
+                                                    <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                                </span>
+                                            }
+                                            else if (invoice.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill">
+                                                    <i class="bi bi-clock-fill me-1"></i> Pending
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill">@invoice.Status</span>
+                                            }
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         }
